@@ -4,6 +4,7 @@
 # NOTE: See https://docs.python.org/3.12/library/multiprocessing.html#the-spawn-and-forkserver-start-methods
 if __name__ == "__main__":
     # Import standard modules ...
+    import argparse
     import glob
     import os
     import pathlib
@@ -54,6 +55,21 @@ if __name__ == "__main__":
 
     # **************************************************************************
 
+    # Create argument parser and parse the arguments ...
+    parser = argparse.ArgumentParser(
+           allow_abbrev = False,
+            description = "Make maps using old Cartopy.",
+        formatter_class = argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        "--debug",
+        action = "store_true",
+          help = "print debug messages",
+    )
+    args = parser.parse_args()
+
+    # **************************************************************************
+
     # Create short-hands ...
     interpolation = "none"
     regrid_shape = 750
@@ -97,12 +113,15 @@ if __name__ == "__main__":
                 fg,
                 add_coastlines = False,
                  add_gridlines = True,
+                         debug = args.debug,
             )
 
             # Configure axis ...
             pyguymer3.geo.add_map_background(
                 ax,
+                        debug = args.debug,
                 interpolation = interpolation,
+                         name = "natural-earth-1",
                  regrid_shape = regrid_shape,
                      resample = resample,
                    resolution = resolution,
@@ -139,6 +158,7 @@ if __name__ == "__main__":
             # Optimise figure ...
             pyguymer3.image.optimise_image(
                 pName,
+                  debug = args.debug,
                   strip = True,
                 timeout = 3600.0,
             )

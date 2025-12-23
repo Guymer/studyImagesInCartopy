@@ -41,6 +41,21 @@ if __name__ == "__main__":
 
     # **************************************************************************
 
+    # Create argument parser and parse the arguments ...
+    parser = argparse.ArgumentParser(
+           allow_abbrev = False,
+            description = "Make images comparing maps using old Cartopy and maps using new Cartopy.",
+        formatter_class = argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        "--debug",
+        action = "store_true",
+          help = "print debug messages",
+    )
+    args = parser.parse_args()
+
+    # **************************************************************************
+
     # Create short-hands ...
     padding = 32                                                                # [px]
     snippet = 256                                                               # [px]
@@ -235,6 +250,7 @@ if __name__ == "__main__":
         # Optimise PNG ...
         pyguymer3.image.optimise_image(
             pName1,
+              debug = args.debug,
               strip = True,
             timeout = 3600.0,
         )
