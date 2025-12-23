@@ -61,11 +61,12 @@ if __name__ == "__main__":
     snippetScale = 4                                                            # [×]
     title = 128                                                                 # [px]
 
-    # Create short-hand ...
-    font = PIL.ImageFont.truetype(
-        matplotlib.font_manager.findfont("DejaVu Sans"),
-        title // 4,
-    )
+    # Create short-hands ...
+    fontPath = matplotlib.font_manager.findfont("DejaVu Sans")
+    fontSize = title // 4                                                       # [px]
+    font = PIL.ImageFont.truetype(fontPath, fontSize)
+
+    print(f"INFO: Will use \"{fontPath}\" at {fontSize:d} px.")
 
     # Loop over figure DPIs ...
     for dpi in [
