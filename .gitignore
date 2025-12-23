@@ -1,0 +1,29 @@
+# OS generated files ...
+.directory
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Hide compiled code ...
+__pycache__
+
+# Hide output of Coverage/cProfile/MyPy/PyLint/ShellCheck ...
+.coverage
+cProfile.log
+mypy.log
+pylint.log
+shellcheck.log
+*.gcda
+*.gcno
+
+# Ignore compiler generated files ...
+*.so
+*.so.dSYM
+
+# Hide output ...
+*.png
+*.webp
