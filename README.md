@@ -1,3 +1,7 @@
+# Study Images In Cartopy
+
+!["mypy" GitHub Action Status](https://github.com/Guymer/studyImagesInCartopy/actions/workflows/mypy.yaml/badge.svg) !["pylint" GitHub Action Status](https://github.com/Guymer/studyImagesInCartopy/actions/workflows/pylint.yaml/badge.svg)
+
 This repository contains a collection of scripts to study images rendered in Cartopy.
 
 ## Dependencies
