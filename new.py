@@ -132,7 +132,7 @@ if __name__ == "__main__":
                 )
 
             # Configure axis ...
-            ax.set_title(f"interpolation = {interpolation}; regrid_shape = ({regrid_shape[0]:d},{regrid_shape[1]:d}); resample = {repr(resample)}")
+            ax.set_title(f"interpolation = \"{interpolation}\"; regrid_shape = ({regrid_shape[0]:d},{regrid_shape[1]:d}); resample = {repr(resample)}")
 
             # Configure figure ...
             fg.suptitle(f"{fg.get_size_inches()[0]:.1f} inches × {fg.get_size_inches()[1]:.1f} inches at {dpi:d} DPI with \"{resolution}\" background image")
