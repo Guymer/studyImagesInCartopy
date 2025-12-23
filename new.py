@@ -134,7 +134,7 @@ if __name__ == "__main__":
             )
 
             # Loop over GeoJSON files ...
-            for jName in sorted(glob.glob(f"{pyguymer3.__path__[0]}/../tests/greatCircle/greatCircle?_4.geojson")):
+            for jName in sorted(glob.glob(os.path.abspath(f"{pyguymer3.__path__[0]}/../tests/greatCircle/greatCircle?_4.geojson"))):
                 print(f"Loading \"{jName}\" ...")
 
                 # Load GeoJSON file ...
