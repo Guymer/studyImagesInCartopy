@@ -8,6 +8,7 @@ if __name__ == "__main__":
     import glob
     import os
     import pathlib
+    import resource
 
     # Import special modules ...
     try:
@@ -69,6 +70,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # **************************************************************************
+
+    # Set the maximum area of address space which may be taken by the process ...
+    try:
+        resource.setrlimit(resource.RLIMIT_AS, (16 * 1024 * 1024 * 1024, resource.RLIM_INFINITY))
+    except:
+        print("WARNING: Failed to limit the maximum area of address space which may be taken by the process - prepare for OOM errors.")
 
     # Create short-hands ...
     interpolation = "none"
