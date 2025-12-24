@@ -200,7 +200,13 @@ if __name__ == "__main__":
                         )
                     except numpy.core._exceptions._ArrayMemoryError:
                         print("--> FAILED! (numpy.core._exceptions._ArrayMemoryError)")
+
+                        # Remove entry from list ...
                         pNames.remove(pName)
+
+                        # Clean up ...
+                        matplotlib.pyplot.close(fg)
+                        del fg, ax
 
                 # **************************************************************
 
