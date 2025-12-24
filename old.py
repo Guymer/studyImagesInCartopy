@@ -40,6 +40,10 @@ if __name__ == "__main__":
     except:
         raise Exception("\"matplotlib\" is not installed; run \"pip install --user matplotlib\"") from None
     try:
+        import numpy
+    except:
+        raise Exception("\"numpy\" is not installed; run \"pip install --user numpy\"") from None
+    try:
         import shapely
         import shapely.geometry
     except:
@@ -112,66 +116,79 @@ if __name__ == "__main__":
 
             print(f"Making \"{pName}\" ...")
 
-            # Create figure ...
-            fg = matplotlib.pyplot.figure(
-                    dpi = dpi,
-                figsize = (12.8, 7.2),
-            )
-
-            # Create axis ...
-            ax = pyguymer3.geo.add_axis(
-                fg,
-                add_coastlines = False,
-                 add_gridlines = True,
-                         debug = args.debug,
-            )
-
-            # Configure axis ...
-            pyguymer3.geo.add_map_background(
-                ax,
-                        debug = args.debug,
-                interpolation = interpolation,
-                         name = "natural-earth-1",
-                 regrid_shape = regrid_shape,
-                     resample = resample,
-                   resolution = resolution,
-            )
-
-            # Loop over GeoJSON files ...
-            for jName in sorted(glob.glob(os.path.abspath(f"{pyguymer3.__path__[0]}/../tests/greatCircle/greatCircle?_4.geojson"))):
-                print(f"Loading \"{jName}\" ...")
-
-                # Load GeoJSON file ...
-                with open(jName, "rt", encoding = "utf-8") as fObj:
-                    savedCircle = shapely.geometry.shape(geojson.load(fObj))
-
-                # Plot saved great circle ...
-                ax.add_geometries(
-                    pyguymer3.geo.extract_lines(savedCircle),
-                    cartopy.crs.PlateCarree(),
-                        color = "none",
-                    edgecolor = "red",
-                    linewidth = 1.0,
+            # Catch exceptions ...
+            try:
+                # Create figure ...
+                fg = matplotlib.pyplot.figure(
+                        dpi = dpi,
+                    figsize = (12.8, 7.2),
                 )
 
-            # Configure axis ...
-            ax.set_title(f"interpolation = \"{interpolation}\"; regrid_shape = {regrid_shape:d}; resample = {repr(resample)}")
+                # Create axis ...
+                ax = pyguymer3.geo.add_axis(
+                    fg,
+                    add_coastlines = False,
+                     add_gridlines = True,
+                             debug = args.debug,
+                )
 
-            # Configure figure ...
-            fg.suptitle(f"{fg.get_size_inches()[0]:.1f} inches × {fg.get_size_inches()[1]:.1f} inches at {dpi:d} DPI with \"{resolution}\" background image")
-            fg.tight_layout()
+                # Configure axis ...
+                pyguymer3.geo.add_map_background(
+                    ax,
+                            debug = args.debug,
+                    interpolation = interpolation,
+                             name = "natural-earth-1",
+                     regrid_shape = regrid_shape,
+                         resample = resample,
+                       resolution = resolution,
+                )
 
-            # Save figure ...
-            fg.savefig(pName)
-            matplotlib.pyplot.close(fg)
+                # Loop over GeoJSON files ...
+                for jName in sorted(glob.glob(os.path.abspath(f"{pyguymer3.__path__[0]}/../tests/greatCircle/greatCircle?_4.geojson"))):
+                    print(f"    Loading \"{jName}\" ...")
 
-            # Optimise figure ...
-            pyguymer3.image.optimise_image(
-                pName,
-                  debug = args.debug,
-                  strip = True,
-                timeout = 3600.0,
-            )
+                    # Load GeoJSON file ...
+                    with open(jName, "rt", encoding = "utf-8") as fObj:
+                        savedCircle = shapely.geometry.shape(geojson.load(fObj))
+
+                    # Plot saved great circle ...
+                    ax.add_geometries(
+                        pyguymer3.geo.extract_lines(savedCircle),
+                        cartopy.crs.PlateCarree(),
+                            color = "none",
+                        edgecolor = "red",
+                        linewidth = 1.0,
+                    )
+
+                # Configure axis ...
+                ax.set_title(f"interpolation = \"{interpolation}\"; regrid_shape = {regrid_shape:d}; resample = {repr(resample)}")
+
+                # Configure figure ...
+                fg.suptitle(f"{fg.get_size_inches()[0]:.1f} inches × {fg.get_size_inches()[1]:.1f} inches at {dpi:d} DPI with \"{resolution}\" background image")
+                fg.tight_layout()
+
+                # Save figure ...
+                fg.savefig(pName)
+                matplotlib.pyplot.close(fg)
+
+                # Optimise figure ...
+                pyguymer3.image.optimise_image(
+                    pName,
+                      debug = args.debug,
+                      strip = True,
+                    timeout = 3600.0,
+                )
+            except numpy.core._exceptions._ArrayMemoryError:
+                print("--> FAILED! (numpy.core._exceptions._ArrayMemoryError)")
+                pNames.remove(pName)
+
+        # **********************************************************************
+
+        # Skip this combination if no plots were created to make an animation
+        # from ...
+        if not len(pNames):
+            print(f"Skipping all \"{dName}/*.webp\" animations.")
+            continue
 
         # **********************************************************************
 
