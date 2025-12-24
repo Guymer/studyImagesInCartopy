@@ -69,144 +69,72 @@ if __name__ == "__main__":
 
     print(f"INFO: Will use \"{fontPath}\" at {fontSize:d} px.")
 
-    # Create short-hand and skip if the figure exists ...
-    dName = f'{__file__.removesuffix(".py")}'
-    if not os.path.exists(dName):
-        os.makedirs(dName)
-
-    # Loop over figure DPIs ...
-    for dpi in [
-         75,
-        150,
-        300,
-        600,
+    # Loop over interpolations ...
+    for interpolation in [
+        "none",
+        "bicubic",
+        "gaussian",
     ]:
         # Create short-hand and skip if the figure exists ...
-        pName1 = f"{dName}/dpi={dpi:d}.png"
-        if os.path.exists(pName1):
-            continue
+        dName = f'{__file__.removesuffix(".py")}/interpolation={interpolation}'
+        if not os.path.exists(dName):
+            os.makedirs(dName)
 
-        print(f"Making \"{pName1}\" ...")
+        # Loop over figure DPIs ...
+        for dpi in [
+             75,
+            150,
+            300,
+            600,
+        ]:
+            # Create short-hand and skip if the figure exists ...
+            pName1 = f"{dName}/dpi={dpi:d}.png"
+            if os.path.exists(pName1):
+                continue
 
-        # Create the PIL image and drawing object ...
-        img = PIL.Image.new(
-            color = (255, 255, 255),
-             mode = "RGB",
-             size = (
-                6 * (snippetScale * snippet + 2 * padding),
-                title + 6 * (snippetScale * snippet + 2 * padding + title),
-            ),
-        )
-        draw = PIL.ImageDraw.Draw(img)
+            print(f"Making \"{pName1}\" ...")
 
-        # Draw title ...
-        draw.text(
-            (
-                img.width // 2,
-                title // 2,
-            ),
-            f"12.8 inches × 7.2 inches at {dpi:d} DPI\nresample = False",
-            anchor = "ms",              # See https://pillow.readthedocs.io/en/stable/handbook/text-anchors.html
-              fill = (0, 0, 0),
-              font = font,
-        )
-
-        # Loop over background image resolutions ...
-        for iResolution, resolution in enumerate(
-            [
-                "large0256px",
-                "large0512px",
-                "large1024px",
-                "large2048px",
-                "large4096px",
-                "large8192px",
-            ]
-        ):
-            # Create short-hand ...
-            pName2 = f"old/dpi={dpi:d}/res={resolution}.png"
-
-            # Create short-hands ...
-            upper = 2 * title + padding + iResolution * (snippetScale * snippet + 2 * padding + title)  # [px]
-            lower = upper + (snippetScale * snippet)                            # [px]
-            left = padding                                                      # [px]
-            right = left + (snippetScale * snippet)                             # [px]
-
-            # Shade the region for this combination and draw title ...
-            img.paste(
-                (223, 223, 223),
-                (
-                    left - padding // 2,
-                    upper - title - padding // 2,
-                    right + padding // 2,
-                    lower + padding // 2,
+            # Create the PIL image and drawing object ...
+            img = PIL.Image.new(
+                color = (255, 255, 255),
+                 mode = "RGB",
+                 size = (
+                    6 * (snippetScale * snippet + 2 * padding),
+                    title + 6 * (snippetScale * snippet + 2 * padding + title),
                 ),
             )
+            draw = PIL.ImageDraw.Draw(img)
+
+            # Draw title ...
             draw.text(
                 (
-                    (left + right) // 2,
-                    upper - 3 * title // 4,
+                    img.width // 2,
+                    title // 2,
                 ),
-                f"interpolation = \"none\"\nregrid_shape = 750\nresolution = \"{resolution}\"",
+                f"12.8 inches × 7.2 inches at {dpi:d} DPI\nresample = False",
                 anchor = "ms",          # See https://pillow.readthedocs.io/en/stable/handbook/text-anchors.html
                   fill = (0, 0, 0),
                   font = font,
             )
 
-            print(f"  Loading \"{pName2}\" ...")
-
-            # Load the PIL image ...
-            with PIL.Image.open(pName2) as iObj:
-                # Paste the image after cutting out the middle and scaling it up ...
-                img.paste(
-                    iObj.crop(
-                        (
-                            iObj.width  // 2 - snippet // 2,
-                            iObj.height // 2 - snippet // 2,
-                            iObj.width  // 2 + snippet // 2,
-                            iObj.height // 2 + snippet // 2,
-                        )
-                    ).resize(
-                        (
-                            snippetScale * snippet,
-                            snippetScale * snippet,
-                        ),
-                        PIL.Image.Resampling.NEAREST,
-                    ),
-                    (
-                        left,
-                        upper,
-                        right,
-                        lower,
-                    ),
-                )
-
-            # ******************************************************************
-
-            # Loop over safety factors ...
-            for iSf, sf in enumerate(
+            # Loop over background image resolutions ...
+            for iResolution, resolution in enumerate(
                 [
-                    0.25,
-                    0.5,
-                    1.0,
-                    2.0,
-                    4.0,
+                    "large0256px",
+                    "large0512px",
+                    "large1024px",
+                    "large2048px",
+                    "large4096px",
+                    "large8192px",
                 ]
             ):
                 # Create short-hand ...
-                pName3 = f"new/dpi={dpi:d}/sf={sf:4.2f}/res={resolution}.png"
-
-                # Calculate the regrid shape based off the resolution and the
-                # size of the figure, as well as a safety factor (remembering
-                # Nyquist) ...
-                regrid_shape = (
-                    round(sf * 12.8 * dpi),
-                    round(sf *  7.2 * dpi),
-                )                                                               # [px], [px]
+                pName2 = f"old/dpi={dpi:d}/res={resolution}.png"
 
                 # Create short-hands ...
                 upper = 2 * title + padding + iResolution * (snippetScale * snippet + 2 * padding + title)  # [px]
                 lower = upper + (snippetScale * snippet)                        # [px]
-                left = padding + (iSf + 1) * (snippetScale * snippet + 2 * padding) # [px]
+                left = padding                                                  # [px]
                 right = left + (snippetScale * snippet)                         # [px]
 
                 # Shade the region for this combination and draw title ...
@@ -224,16 +152,16 @@ if __name__ == "__main__":
                         (left + right) // 2,
                         upper - 3 * title // 4,
                     ),
-                    f"interpolation = \"bicubic\"\nregrid_shape = ({regrid_shape[0]:d},{regrid_shape[1]:d})\nresolution = \"{resolution}\"",
+                    f"interpolation = \"none\"\nregrid_shape = 750\nresolution = \"{resolution}\"",
                     anchor = "ms",      # See https://pillow.readthedocs.io/en/stable/handbook/text-anchors.html
                       fill = (0, 0, 0),
                       font = font,
                 )
 
-                print(f"  Loading \"{pName3}\" ...")
+                print(f"  Loading \"{pName2}\" ...")
 
                 # Load the PIL image ...
-                with PIL.Image.open(pName3) as iObj:
+                with PIL.Image.open(pName2) as iObj:
                     # Paste the image after cutting out the middle and scaling
                     # it up ...
                     img.paste(
@@ -259,20 +187,99 @@ if __name__ == "__main__":
                         ),
                     )
 
-        # **********************************************************************
+                # **************************************************************
 
-        print(f"Saving \"{pName1}\" ...")
+                # Loop over safety factors ...
+                for iSf, sf in enumerate(
+                    [
+                        0.25,
+                        0.5,
+                        1.0,
+                        2.0,
+                        4.0,
+                    ]
+                ):
+                    # Create short-hand ...
+                    pName3 = f"new/interpolation={interpolation}/dpi={dpi:d}/sf={sf:4.2f}/res={resolution}.png"
 
-        # Save the image ...
-        img.save(
-            pName1,
-            optimize = True,
-        )
+                    # Calculate the regrid shape based off the resolution and
+                    # the size of the figure, as well as a safety factor
+                    # (remembering Nyquist) ...
+                    regrid_shape = (
+                        round(sf * 12.8 * dpi),
+                        round(sf *  7.2 * dpi),
+                    )                                                           # [px], [px]
 
-        # Optimise PNG ...
-        pyguymer3.image.optimise_image(
-            pName1,
-              debug = args.debug,
-              strip = True,
-            timeout = 3600.0,
-        )
+                    # Create short-hands ...
+                    upper = 2 * title + padding + iResolution * (snippetScale * snippet + 2 * padding + title)  # [px]
+                    lower = upper + (snippetScale * snippet)                    # [px]
+                    left = padding + (iSf + 1) * (snippetScale * snippet + 2 * padding) # [px]
+                    right = left + (snippetScale * snippet)                     # [px]
+
+                    # Shade the region for this combination and draw title ...
+                    img.paste(
+                        (223, 223, 223),
+                        (
+                            left - padding // 2,
+                            upper - title - padding // 2,
+                            right + padding // 2,
+                            lower + padding // 2,
+                        ),
+                    )
+                    draw.text(
+                        (
+                            (left + right) // 2,
+                            upper - 3 * title // 4,
+                        ),
+                        f"interpolation = \"{interpolation}\"\nregrid_shape = ×{sf:4.2f} = ({regrid_shape[0]:d},{regrid_shape[1]:d})\nresolution = \"{resolution}\"",
+                        anchor = "ms",  # See https://pillow.readthedocs.io/en/stable/handbook/text-anchors.html
+                          fill = (0, 0, 0),
+                          font = font,
+                    )
+
+                    print(f"  Loading \"{pName3}\" ...")
+
+                    # Load the PIL image ...
+                    with PIL.Image.open(pName3) as iObj:
+                        # Paste the image after cutting out the middle and
+                        # scaling it up ...
+                        img.paste(
+                            iObj.crop(
+                                (
+                                    iObj.width  // 2 - snippet // 2,
+                                    iObj.height // 2 - snippet // 2,
+                                    iObj.width  // 2 + snippet // 2,
+                                    iObj.height // 2 + snippet // 2,
+                                )
+                            ).resize(
+                                (
+                                    snippetScale * snippet,
+                                    snippetScale * snippet,
+                                ),
+                                PIL.Image.Resampling.NEAREST,
+                            ),
+                            (
+                                left,
+                                upper,
+                                right,
+                                lower,
+                            ),
+                        )
+
+            # ******************************************************************
+
+            print(f"Saving \"{pName1}\" ...")
+
+            # Save the image ...
+            img.save(
+                pName1,
+                optimize = True,
+            )
+
+            # Optimise PNG ...
+            pyguymer3.image.optimise_image(
+                pName1,
+                  debug = args.debug,
+                  strip = True,
+                timeout = 3600.0,
+            )
