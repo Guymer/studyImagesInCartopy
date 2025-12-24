@@ -124,74 +124,79 @@ if __name__ == "__main__":
 
                     print(f"Making \"{pName}\" ...")
 
-                    # Create figure ...
-                    fg = matplotlib.pyplot.figure(
-                            dpi = dpi,
-                        figsize = (12.8, 7.2),
-                    )
-
-                    # Create axis ...
-                    ax = pyguymer3.geo.add_axis(
-                        fg,
-                        add_coastlines = False,
-                         add_gridlines = True,
-                                 debug = args.debug,
-                    )
-
-                    # Calculate the regrid shape based off the resolution and
-                    # the size of the figure, as well as a safety factor
-                    # (remembering Nyquist) ...
-                    regrid_shape = (
-                        round(sf * fg.get_size_inches()[0] * dpi),
-                        round(sf * fg.get_size_inches()[1] * dpi),
-                    )                                                           # [px], [px]
-
-                    # Configure axis ...
-                    pyguymer3.geo.add_map_background(
-                        ax,
-                                debug = args.debug,
-                        interpolation = interpolation,
-                                 name = "natural-earth-1",
-                         regrid_shape = regrid_shape,
-                             resample = resample,
-                           resolution = resolution,
-                    )
-
-                    # Loop over GeoJSON files ...
-                    for jName in sorted(glob.glob(os.path.abspath(f"{pyguymer3.__path__[0]}/../tests/greatCircle/greatCircle?_4.geojson"))):
-                        print(f"Loading \"{jName}\" ...")
-
-                        # Load GeoJSON file ...
-                        with open(jName, "rt", encoding = "utf-8") as fObj:
-                            savedCircle = shapely.geometry.shape(geojson.load(fObj))
-
-                        # Plot saved great circle ...
-                        ax.add_geometries(
-                            pyguymer3.geo.extract_lines(savedCircle),
-                            cartopy.crs.PlateCarree(),
-                                color = "none",
-                            edgecolor = "red",
-                            linewidth = 1.0,
+                    # Catch exceptions ...
+                    try:
+                        # Create figure ...
+                        fg = matplotlib.pyplot.figure(
+                                dpi = dpi,
+                            figsize = (12.8, 7.2),
                         )
 
-                    # Configure axis ...
-                    ax.set_title(f"interpolation = \"{interpolation}\"; regrid_shape = ({regrid_shape[0]:d},{regrid_shape[1]:d}); resample = {repr(resample)}")
+                        # Create axis ...
+                        ax = pyguymer3.geo.add_axis(
+                            fg,
+                            add_coastlines = False,
+                             add_gridlines = True,
+                                     debug = args.debug,
+                        )
 
-                    # Configure figure ...
-                    fg.suptitle(f"{fg.get_size_inches()[0]:.1f} inches × {fg.get_size_inches()[1]:.1f} inches at {dpi:d} DPI with \"{resolution}\" background image")
-                    fg.tight_layout()
+                        # Calculate the regrid shape based off the resolution
+                        # and the size of the figure, as well as a safety factor
+                        # (remembering Nyquist) ...
+                        regrid_shape = (
+                            round(sf * fg.get_size_inches()[0] * dpi),
+                            round(sf * fg.get_size_inches()[1] * dpi),
+                        )                                                       # [px], [px]
 
-                    # Save figure ...
-                    fg.savefig(pName)
-                    matplotlib.pyplot.close(fg)
+                        # Configure axis ...
+                        pyguymer3.geo.add_map_background(
+                            ax,
+                                    debug = args.debug,
+                            interpolation = interpolation,
+                                     name = "natural-earth-1",
+                             regrid_shape = regrid_shape,
+                                 resample = resample,
+                               resolution = resolution,
+                        )
 
-                    # Optimise figure ...
-                    pyguymer3.image.optimise_image(
-                        pName,
-                          debug = args.debug,
-                          strip = True,
-                        timeout = 3600.0,
-                    )
+                        # Loop over GeoJSON files ...
+                        for jName in sorted(glob.glob(os.path.abspath(f"{pyguymer3.__path__[0]}/../tests/greatCircle/greatCircle?_4.geojson"))):
+                            print(f"Loading \"{jName}\" ...")
+
+                            # Load GeoJSON file ...
+                            with open(jName, "rt", encoding = "utf-8") as fObj:
+                                savedCircle = shapely.geometry.shape(geojson.load(fObj))
+
+                            # Plot saved great circle ...
+                            ax.add_geometries(
+                                pyguymer3.geo.extract_lines(savedCircle),
+                                cartopy.crs.PlateCarree(),
+                                    color = "none",
+                                edgecolor = "red",
+                                linewidth = 1.0,
+                            )
+
+                        # Configure axis ...
+                        ax.set_title(f"interpolation = \"{interpolation}\"; regrid_shape = ({regrid_shape[0]:d},{regrid_shape[1]:d}); resample = {repr(resample)}")
+
+                        # Configure figure ...
+                        fg.suptitle(f"{fg.get_size_inches()[0]:.1f} inches × {fg.get_size_inches()[1]:.1f} inches at {dpi:d} DPI with \"{resolution}\" background image")
+                        fg.tight_layout()
+
+                        # Save figure ...
+                        fg.savefig(pName)
+                        matplotlib.pyplot.close(fg)
+
+                        # Optimise figure ...
+                        pyguymer3.image.optimise_image(
+                            pName,
+                              debug = args.debug,
+                              strip = True,
+                            timeout = 3600.0,
+                        )
+                    except numpy.core._exceptions._ArrayMemoryError:
+                        print("--> FAILED! (numpy.core._exceptions._ArrayMemoryError)")
+                        pNames.remove(pName)
 
                 # **************************************************************
 
