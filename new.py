@@ -40,6 +40,10 @@ if __name__ == "__main__":
     except:
         raise Exception("\"matplotlib\" is not installed; run \"pip install --user matplotlib\"") from None
     try:
+        import numpy
+    except:
+        raise Exception("\"numpy\" is not installed; run \"pip install --user numpy\"") from None
+    try:
         import shapely
         import shapely.geometry
     except:
