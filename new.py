@@ -8,6 +8,7 @@ if __name__ == "__main__":
     import glob
     import os
     import pathlib
+    import resource
 
     # Import special modules ...
     try:
@@ -70,148 +71,132 @@ if __name__ == "__main__":
 
     # **************************************************************************
 
-    # Create short-hands ...
-    interpolation = "bicubic"
+    # Set the maximum area of address space which may be taken by the process ...
+    try:
+        resource.setrlimit(resource.RLIMIT_AS, (16 * 1024 * 1024 * 1024, resource.RLIM_INFINITY))
+    except:
+        print("WARNING: Failed to limit the maximum area of address space which may be taken by the process - prepare for OOM errors.")
+
+    # Create short-hand ...
     resample = False
 
-    # Loop over figure DPIs ...
-    for dpi in [
-         75,
-        150,
-        300,
-        600,
+    # Loop over interpolations ...
+    for interpolation in [
+        "none",
+        "bicubic",
+        "gaussian",
     ]:
-        # Loop over safety factors ...
-        for sf in [
-            0.25,
-            0.5,
-            1.0,
-            2.0,
-            4.0,
+        # Loop over figure DPIs ...
+        for dpi in [
+             75,
+            150,
+            300,
+            600,
         ]:
-            # Initialize list ...
-            pNames = []
-
-            # Loop over background image resolutions ...
-            for resolution in [
-                "large0256px",
-                "large0512px",
-                "large1024px",
-                "large2048px",
-                "large4096px",
-                "large8192px",
+            # Loop over safety factors ...
+            for sf in [
+                0.25,
+                0.5,
+                1.0,
+                2.0,
+                4.0,
             ]:
-                # Create short-hand and skip if the figure exists ...
-                dName = f'{__file__.removesuffix(".py")}/dpi={dpi:d}/sf={sf:4.2f}'
-                if not os.path.exists(dName):
-                    os.makedirs(dName)
-                pName = f"{dName}/res={resolution}.png"
-                pNames.append(pName)
-                if os.path.exists(pName):
-                    continue
+                # Initialize list ...
+                pNames = []
 
-                print(f"Making \"{pName}\" ...")
+                # Loop over background image resolutions ...
+                for resolution in [
+                    "large0256px",
+                    "large0512px",
+                    "large1024px",
+                    "large2048px",
+                    "large4096px",
+                    "large8192px",
+                ]:
+                    # Create short-hand and skip if the figure exists ...
+                    dName = f'{__file__.removesuffix(".py")}/interpolation={interpolation}/dpi={dpi:d}/sf={sf:4.2f}'
+                    if not os.path.exists(dName):
+                        os.makedirs(dName)
+                    pName = f"{dName}/res={resolution}.png"
+                    pNames.append(pName)
+                    if os.path.exists(pName):
+                        continue
 
-                # Create figure ...
-                fg = matplotlib.pyplot.figure(
-                        dpi = dpi,
-                    figsize = (12.8, 7.2),
-                )
+                    print(f"Making \"{pName}\" ...")
 
-                # Create axis ...
-                ax = pyguymer3.geo.add_axis(
-                    fg,
-                    add_coastlines = False,
-                     add_gridlines = True,
-                             debug = args.debug,
-                )
-
-                # Calculate the regrid shape based off the resolution and the
-                # size of the figure, as well as a safety factor (remembering
-                # Nyquist) ...
-                regrid_shape = (
-                    round(sf * fg.get_size_inches()[0] * dpi),
-                    round(sf * fg.get_size_inches()[1] * dpi),
-                )                                                               # [px], [px]
-
-                # Configure axis ...
-                pyguymer3.geo.add_map_background(
-                    ax,
-                            debug = args.debug,
-                    interpolation = interpolation,
-                             name = "natural-earth-1",
-                     regrid_shape = regrid_shape,
-                         resample = resample,
-                       resolution = resolution,
-                )
-
-                # Loop over GeoJSON files ...
-                for jName in sorted(glob.glob(os.path.abspath(f"{pyguymer3.__path__[0]}/../tests/greatCircle/greatCircle?_4.geojson"))):
-                    print(f"Loading \"{jName}\" ...")
-
-                    # Load GeoJSON file ...
-                    with open(jName, "rt", encoding = "utf-8") as fObj:
-                        savedCircle = shapely.geometry.shape(geojson.load(fObj))
-
-                    # Plot saved great circle ...
-                    ax.add_geometries(
-                        pyguymer3.geo.extract_lines(savedCircle),
-                        cartopy.crs.PlateCarree(),
-                            color = "none",
-                        edgecolor = "red",
-                        linewidth = 1.0,
+                    # Create figure ...
+                    fg = matplotlib.pyplot.figure(
+                            dpi = dpi,
+                        figsize = (12.8, 7.2),
                     )
 
-                # Configure axis ...
-                ax.set_title(f"interpolation = \"{interpolation}\"; regrid_shape = ({regrid_shape[0]:d},{regrid_shape[1]:d}); resample = {repr(resample)}")
+                    # Create axis ...
+                    ax = pyguymer3.geo.add_axis(
+                        fg,
+                        add_coastlines = False,
+                         add_gridlines = True,
+                                 debug = args.debug,
+                    )
 
-                # Configure figure ...
-                fg.suptitle(f"{fg.get_size_inches()[0]:.1f} inches × {fg.get_size_inches()[1]:.1f} inches at {dpi:d} DPI with \"{resolution}\" background image")
-                fg.tight_layout()
+                    # Calculate the regrid shape based off the resolution and
+                    # the size of the figure, as well as a safety factor
+                    # (remembering Nyquist) ...
+                    regrid_shape = (
+                        round(sf * fg.get_size_inches()[0] * dpi),
+                        round(sf * fg.get_size_inches()[1] * dpi),
+                    )                                                           # [px], [px]
 
-                # Save figure ...
-                fg.savefig(pName)
-                matplotlib.pyplot.close(fg)
+                    # Configure axis ...
+                    pyguymer3.geo.add_map_background(
+                        ax,
+                                debug = args.debug,
+                        interpolation = interpolation,
+                                 name = "natural-earth-1",
+                         regrid_shape = regrid_shape,
+                             resample = resample,
+                           resolution = resolution,
+                    )
 
-                # Optimise figure ...
-                pyguymer3.image.optimise_image(
-                    pName,
-                      debug = args.debug,
-                      strip = True,
-                    timeout = 3600.0,
-                )
+                    # Loop over GeoJSON files ...
+                    for jName in sorted(glob.glob(os.path.abspath(f"{pyguymer3.__path__[0]}/../tests/greatCircle/greatCircle?_4.geojson"))):
+                        print(f"Loading \"{jName}\" ...")
 
-            # ******************************************************************
+                        # Load GeoJSON file ...
+                        with open(jName, "rt", encoding = "utf-8") as fObj:
+                            savedCircle = shapely.geometry.shape(geojson.load(fObj))
 
-            # Create short-hand ...
-            wName = f"{dName}/fullSize.webp"
+                        # Plot saved great circle ...
+                        ax.add_geometries(
+                            pyguymer3.geo.extract_lines(savedCircle),
+                            cartopy.crs.PlateCarree(),
+                                color = "none",
+                            edgecolor = "red",
+                            linewidth = 1.0,
+                        )
 
-            # Check if WEBP needs making ...
-            if not os.path.exists(wName):
-                print(f"Making \"{wName}\" ...")
+                    # Configure axis ...
+                    ax.set_title(f"interpolation = \"{interpolation}\"; regrid_shape = ({regrid_shape[0]:d},{regrid_shape[1]:d}); resample = {repr(resample)}")
 
-                # Make 1 fps WEBP ...
-                pyguymer3.media.images2webp(
-                    pNames,
-                    wName,
-                    fps = 1.0,
-                )
+                    # Configure figure ...
+                    fg.suptitle(f"{fg.get_size_inches()[0]:.1f} inches × {fg.get_size_inches()[1]:.1f} inches at {dpi:d} DPI with \"{resolution}\" background image")
+                    fg.tight_layout()
 
-            # Loop over maximum sizes ...
-            for maxSize in [
-                 256,
-                 512,
-                1024,
-                2048,
-                4096,
-                8192,
-            ]:
-                # Skip this size if it is larger than the figure ...
-                if maxSize >= round(12.8 * dpi):
-                    continue
+                    # Save figure ...
+                    fg.savefig(pName)
+                    matplotlib.pyplot.close(fg)
+
+                    # Optimise figure ...
+                    pyguymer3.image.optimise_image(
+                        pName,
+                          debug = args.debug,
+                          strip = True,
+                        timeout = 3600.0,
+                    )
+
+                # **************************************************************
 
                 # Create short-hand ...
-                wName = f"{dName}/{maxSize:04d}px.webp"
+                wName = f"{dName}/fullSize.webp"
 
                 # Check if WEBP needs making ...
                 if not os.path.exists(wName):
@@ -221,7 +206,34 @@ if __name__ == "__main__":
                     pyguymer3.media.images2webp(
                         pNames,
                         wName,
-                                 fps = 1.0,
-                        screenHeight = maxSize,
-                         screenWidth = maxSize,
+                        fps = 1.0,
                     )
+
+                # Loop over maximum sizes ...
+                for maxSize in [
+                     256,
+                     512,
+                    1024,
+                    2048,
+                    4096,
+                    8192,
+                ]:
+                    # Skip this size if it is larger than the figure ...
+                    if maxSize >= round(12.8 * dpi):
+                        continue
+
+                    # Create short-hand ...
+                    wName = f"{dName}/{maxSize:04d}px.webp"
+
+                    # Check if WEBP needs making ...
+                    if not os.path.exists(wName):
+                        print(f"Making \"{wName}\" ...")
+
+                        # Make 1 fps WEBP ...
+                        pyguymer3.media.images2webp(
+                            pNames,
+                            wName,
+                                     fps = 1.0,
+                            screenHeight = maxSize,
+                             screenWidth = maxSize,
+                        )
