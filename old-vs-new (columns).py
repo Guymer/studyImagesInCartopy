@@ -105,13 +105,6 @@ if __name__ == "__main__":
             )
             draw = PIL.ImageDraw.Draw(img)
 
-            # Calculate the regrid shape based off the resolution and the size
-            # of the figure, as well as a safety factor (remembering Nyquist) ...
-            regrid_shape = (
-                round(sf * 12.8 * dpi),
-                round(sf *  7.2 * dpi),
-            )                                                                   # [px], [px]
-
             # Draw title ...
             draw.text(
                 (
@@ -199,6 +192,14 @@ if __name__ == "__main__":
 
                 # **************************************************************
 
+                # Calculate the regrid shape based off the resolution and the
+                # size of the figure, as well as a safety factor (remembering
+                # Nyquist) ...
+                regrid_shape = (
+                    round(sf * 12.8 * dpi),
+                    round(sf *  7.2 * dpi),
+                )                                                               # [px], [px]
+
                 # Create short-hands ...
                 upper = 2 * title + padding + iResolution * (snippetScale * snippet + 2 * padding + title)  # [px]
                 lower = upper + (snippetScale * snippet)                        # [px]
@@ -254,6 +255,8 @@ if __name__ == "__main__":
                             lower,
                         ),
                     )
+
+            # ******************************************************************
 
             print(f"Saving \"{pName1}\" ...")
 

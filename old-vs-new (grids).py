@@ -106,7 +106,7 @@ if __name__ == "__main__":
                 title // 2,
             ),
             f"12.8 inches × 7.2 inches at {dpi:d} DPI\nresample = False",
-            anchor = "ms",          # See https://pillow.readthedocs.io/en/stable/handbook/text-anchors.html
+            anchor = "ms",              # See https://pillow.readthedocs.io/en/stable/handbook/text-anchors.html
               fill = (0, 0, 0),
               font = font,
         )
@@ -127,9 +127,9 @@ if __name__ == "__main__":
 
             # Create short-hands ...
             upper = 2 * title + padding + iResolution * (snippetScale * snippet + 2 * padding + title)  # [px]
-            lower = upper + (snippetScale * snippet)                        # [px]
-            left = padding                                                  # [px]
-            right = left + (snippetScale * snippet)                         # [px]
+            lower = upper + (snippetScale * snippet)                            # [px]
+            left = padding                                                      # [px]
+            right = left + (snippetScale * snippet)                             # [px]
 
             # Shade the region for this combination and draw title ...
             img.paste(
@@ -147,7 +147,7 @@ if __name__ == "__main__":
                     upper - 3 * title // 4,
                 ),
                 f"interpolation = \"none\"\nregrid_shape = 750\nresolution = \"{resolution}\"",
-                anchor = "ms",      # See https://pillow.readthedocs.io/en/stable/handbook/text-anchors.html
+                anchor = "ms",          # See https://pillow.readthedocs.io/en/stable/handbook/text-anchors.html
                   fill = (0, 0, 0),
                   font = font,
             )
@@ -156,8 +156,7 @@ if __name__ == "__main__":
 
             # Load the PIL image ...
             with PIL.Image.open(pName2) as iObj:
-                # Paste the image after cutting out the middle and scaling
-                # it up ...
+                # Paste the image after cutting out the middle and scaling it up ...
                 img.paste(
                     iObj.crop(
                         (
@@ -181,7 +180,7 @@ if __name__ == "__main__":
                     ),
                 )
 
-            # **************************************************************
+            # ******************************************************************
 
             # Loop over safety factors ...
             for iSf, sf in enumerate(
@@ -196,17 +195,18 @@ if __name__ == "__main__":
                 # Create short-hand ...
                 pName3 = f"new/dpi={dpi:d}/sf={sf:4.2f}/res={resolution}.png"
 
-                # Calculate the regrid shape based off the resolution and the size
-                # of the figure, as well as a safety factor (remembering Nyquist) ...
+                # Calculate the regrid shape based off the resolution and the
+                # size of the figure, as well as a safety factor (remembering
+                # Nyquist) ...
                 regrid_shape = (
                     round(sf * 12.8 * dpi),
                     round(sf *  7.2 * dpi),
-                )                                                                   # [px], [px]
+                )                                                               # [px], [px]
 
                 # Create short-hands ...
                 upper = 2 * title + padding + iResolution * (snippetScale * snippet + 2 * padding + title)  # [px]
                 lower = upper + (snippetScale * snippet)                        # [px]
-                left = padding + (iSf + 1) * (snippetScale * snippet + 2 * padding)         # [px]
+                left = padding + (iSf + 1) * (snippetScale * snippet + 2 * padding) # [px]
                 right = left + (snippetScale * snippet)                         # [px]
 
                 # Shade the region for this combination and draw title ...
