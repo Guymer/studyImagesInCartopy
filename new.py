@@ -102,7 +102,10 @@ if __name__ == "__main__":
                 "large8192px",
             ]:
                 # Create short-hand and skip if the figure exists ...
-                pName = f'{__file__.removesuffix(".py")}/dpi={dpi:d}/sf={sf:4.2f}/res={resolution}.png'
+                dName = f'{__file__.removesuffix(".py")}/dpi={dpi:d}/sf={sf:4.2f}'
+                if not os.path.exists(dName):
+                    os.makedirs(dName)
+                pName = f"{dName}/res={resolution}.png"
                 pNames.append(pName)
                 if os.path.exists(pName):
                     continue
@@ -181,7 +184,7 @@ if __name__ == "__main__":
             # ******************************************************************
 
             # Create short-hand ...
-            wName = f'{__file__.removesuffix(".py")}/dpi={dpi:d}/sf={sf:4.2f}/fullSize.webp'
+            wName = f"{dName}/fullSize.webp"
 
             # Check if WEBP needs making ...
             if not os.path.exists(wName):
@@ -208,7 +211,7 @@ if __name__ == "__main__":
                     continue
 
                 # Create short-hand ...
-                wName = f'{__file__.removesuffix(".py")}/dpi={dpi:d}/sf={sf:4.2f}/{maxSize:04d}px.webp'
+                wName = f"{dName}/{maxSize:04d}px.webp"
 
                 # Check if WEBP needs making ...
                 if not os.path.exists(wName):

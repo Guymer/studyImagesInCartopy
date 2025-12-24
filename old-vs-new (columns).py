@@ -84,8 +84,11 @@ if __name__ == "__main__":
             2.0,
             4.0,
         ]:
-            # Create short-hand and skip if the image exists ...
-            pName1 = f"old-vs-new/dpi={dpi:d}/sf={sf:4.2f}.png"
+            # Create short-hand and skip if the figure exists ...
+            dName = f'{__file__.removesuffix(".py")}/dpi={dpi:d}'
+            if not os.path.exists(dName):
+                os.makedirs(dName)
+            pName1 = f"{dName}/sf={sf:4.2f}.png"
             if os.path.exists(pName1):
                 continue
 
