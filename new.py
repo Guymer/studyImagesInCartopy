@@ -165,7 +165,7 @@ if __name__ == "__main__":
 
                         # Loop over GeoJSON files ...
                         for jName in sorted(glob.glob(os.path.abspath(f"{pyguymer3.__path__[0]}/../tests/greatCircle/greatCircle?_4.geojson"))):
-                            print(f"Loading \"{jName}\" ...")
+                            print(f"    Loading \"{jName}\" ...")
 
                             # Load GeoJSON file ...
                             with open(jName, "rt", encoding = "utf-8") as fObj:
@@ -207,6 +207,7 @@ if __name__ == "__main__":
                 # Skip this combination if no plots were created to make an
                 # animation from ...
                 if not len(pNames):
+                    print(f"Skipping all \"{dName}/*.webp\" animations.")
                     continue
 
                 # **************************************************************
