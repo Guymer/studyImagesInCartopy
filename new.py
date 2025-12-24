@@ -204,6 +204,13 @@ if __name__ == "__main__":
 
                 # **************************************************************
 
+                # Skip this combination if no plots were created to make an
+                # animation from ...
+                if not len(pNames):
+                    continue
+
+                # **************************************************************
+
                 # Create short-hand ...
                 wName = f"{dName}/fullSize.webp"
 
