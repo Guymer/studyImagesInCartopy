@@ -237,33 +237,58 @@ if __name__ == "__main__":
                           font = font,
                     )
 
-                    print(f"  Loading \"{pName3}\" ...")
+                    # Check if map already exists ...
+                    if os.path.exists(pName3):
+                        print(f"  Loading \"{pName3}\" ...")
 
-                    # Load the PIL image ...
-                    with PIL.Image.open(pName3) as iObj:
-                        # Paste the image after cutting out the middle and
-                        # scaling it up ...
-                        img.paste(
-                            iObj.crop(
-                                (
-                                    iObj.width  // 2 - snippet // 2,
-                                    iObj.height // 2 - snippet // 2,
-                                    iObj.width  // 2 + snippet // 2,
-                                    iObj.height // 2 + snippet // 2,
-                                )
-                            ).resize(
-                                (
-                                    snippetScale * snippet,
-                                    snippetScale * snippet,
+                        # Load the PIL image ...
+                        with PIL.Image.open(pName3) as iObj:
+                            # Paste the image after cutting out the middle and
+                            # scaling it up ...
+                            img.paste(
+                                iObj.crop(
+                                    (
+                                        iObj.width  // 2 - snippet // 2,
+                                        iObj.height // 2 - snippet // 2,
+                                        iObj.width  // 2 + snippet // 2,
+                                        iObj.height // 2 + snippet // 2,
+                                    )
+                                ).resize(
+                                    (
+                                        snippetScale * snippet,
+                                        snippetScale * snippet,
+                                    ),
+                                    PIL.Image.Resampling.NEAREST,
                                 ),
-                                PIL.Image.Resampling.NEAREST,
-                            ),
+                                (
+                                    left,
+                                    upper,
+                                    right,
+                                    lower,
+                                ),
+                            )
+                    else:
+                        # Shade the region where this image should be ...
+                        img.paste(
+                            (191, 191, 191),
                             (
                                 left,
                                 upper,
                                 right,
                                 lower,
                             ),
+                        )
+
+                        # Draw error ...
+                        draw.text(
+                            (
+                                (left + right) // 2,
+                                lower - (snippetScale * snippet) // 2,
+                            ),
+                            "requires more than\n16 GiB of RAM",
+                            anchor = "ms",
+                              fill = (0, 0, 0),
+                              font = font,
                         )
 
             # ******************************************************************
