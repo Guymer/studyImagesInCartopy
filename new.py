@@ -98,13 +98,30 @@ if __name__ == "__main__":
             600,
         ]:
             # Loop over safety factors ...
-            for sf in [
-                0.25,
-                0.5,
-                1.0,
-                2.0,
-                4.0,
-            ]:
+            for i, sf in enumerate(
+                [
+                    0.25,
+                    0.5,
+                    1.0,
+                    2.0,
+                    4.0,
+                ]
+            ):
+                # Create short-hand ...
+                dName = f'{__file__.removesuffix(".py")}/interpolation={interpolation}/dpi={dpi:d}/sf={sf:4.2f}'
+
+                # Skip known bad combinations ...
+                if dpi == 300 and i == 4:
+                    print(f"Skipping all \"{dName}\" maps.")
+                    continue
+                if dpi == 600 and i in [3, 4]:
+                    print(f"Skipping all \"{dName}\" maps.")
+                    continue
+
+                # Ensure that the output folder exists ...
+                if not os.path.exists(dName):
+                    os.makedirs(dName)
+
                 # Initialize list ...
                 pNames = []
 
@@ -118,9 +135,6 @@ if __name__ == "__main__":
                     "large8192px",
                 ]:
                     # Create short-hand and skip if the figure exists ...
-                    dName = f'{__file__.removesuffix(".py")}/interpolation={interpolation}/dpi={dpi:d}/sf={sf:4.2f}'
-                    if not os.path.exists(dName):
-                        os.makedirs(dName)
                     pName = f"{dName}/res={resolution}.png"
                     pNames.append(pName)
                     if os.path.exists(pName):

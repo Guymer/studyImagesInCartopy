@@ -93,6 +93,13 @@ if __name__ == "__main__":
         300,
         600,
     ]:
+        # Create short-hand ...
+        dName = f'{__file__.removesuffix(".py")}/dpi={dpi:d}'
+
+        # Ensure that the output folder exists ...
+        if not os.path.exists(dName):
+            os.makedirs(dName)
+
         # Initialize list ...
         pNames = []
 
@@ -106,9 +113,6 @@ if __name__ == "__main__":
             "large8192px",
         ]:
             # Create short-hand and skip if the figure exists ...
-            dName = f'{__file__.removesuffix(".py")}/dpi={dpi:d}'
-            if not os.path.exists(dName):
-                os.makedirs(dName)
             pName = f"{dName}/res={resolution}.png"
             pNames.append(pName)
             if os.path.exists(pName):
