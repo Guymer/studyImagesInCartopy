@@ -179,7 +179,7 @@ if __name__ == "__main__":
                     timeout = 3600.0,
                 )
             except numpy.core._exceptions._ArrayMemoryError:
-                print("--> FAILED! (numpy.core._exceptions._ArrayMemoryError)")
+                print("    FAILED! (numpy.core._exceptions._ArrayMemoryError)")
 
                 # Remove entry from list ...
                 pNames.remove(pName)
