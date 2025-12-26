@@ -162,8 +162,8 @@ if __name__ == "__main__":
                         # and the size of the figure, as well as a safety factor
                         # (remembering Nyquist) ...
                         regrid_shape = (
-                            round(sf * fg.get_size_inches()[0] * dpi),
-                            round(sf * fg.get_size_inches()[1] * dpi),
+                            round(sf * fg.get_figwidth() * dpi),
+                            round(sf * fg.get_figheight() * dpi),
                         )                                                       # [px], [px]
 
                         # Configure axis ...
@@ -198,7 +198,7 @@ if __name__ == "__main__":
                         ax.set_title(f"interpolation = \"{interpolation}\"; regrid_shape = ({regrid_shape[0]:d},{regrid_shape[1]:d}); resample = {repr(resample)}")
 
                         # Configure figure ...
-                        fg.suptitle(f"{fg.get_size_inches()[0]:.1f} inches × {fg.get_size_inches()[1]:.1f} inches at {dpi:d} DPI with \"{resolution}\" background image")
+                        fg.suptitle(f"{fg.get_figwidth():.1f} inches × {fg.get_figheight():.1f} inches at {dpi:d} DPI with \"{resolution}\" background image")
                         fg.tight_layout()
 
                         # Save figure ...

@@ -168,7 +168,7 @@ if __name__ == "__main__":
                 ax.set_title(f"interpolation = \"{interpolation}\"; regrid_shape = {regrid_shape:d}; resample = {repr(resample)}")
 
                 # Configure figure ...
-                fg.suptitle(f"{fg.get_size_inches()[0]:.1f} inches × {fg.get_size_inches()[1]:.1f} inches at {dpi:d} DPI with \"{resolution}\" background image")
+                fg.suptitle(f"{fg.get_figwidth():.1f} inches × {fg.get_figheight():.1f} inches at {dpi:d} DPI with \"{resolution}\" background image")
                 fg.tight_layout()
 
                 # Save figure ...
