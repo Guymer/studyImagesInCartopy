@@ -174,7 +174,7 @@ if __name__ == "__main__":
                                      name = "natural-earth-1",
                              regrid_shape = regrid_shape,
                                  resample = resample,
-                               resolution = resolution,
+                                  subName = resolution,
                         )
 
                         # Loop over GeoJSON files ...
