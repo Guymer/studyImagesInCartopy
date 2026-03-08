@@ -8,7 +8,7 @@ With the new functionality in Cartopy, picking the best parameters to render an 
 
 * `dpi = 300`;
 * `resample = False`; and
-* if rendering tiles then the tile provider is Thunderforest and `scale = 2`.
+* if rendering tiles then the tile provider is Thunderforest and `tileScale = 2`.
 
 Bearing that in mind, then the problem becomes *only* four-dimensional. The following choices have been made (in order):
 
