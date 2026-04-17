@@ -1,0 +1,15 @@
+.editorconfig
+.github/FUNDING.yml
+.github/workflows/mypy.yaml
+.github/workflows/pylint.yaml
+.gitignore
+.mypy.ini
+.pylint.ini
+.shellcheckrc
+LICENCE.txt
+new.py
+old-vs-new_columns.py
+old-vs-new_grids.py
+old.py
+README.md
+requirements.txt
